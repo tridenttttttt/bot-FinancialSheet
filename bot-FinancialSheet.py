@@ -247,24 +247,26 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         msg_id = context.user_data.get("msg_id")
         mode = context.user_data.get("mode")
 
-        today = datetime.now().strftime("%d/%m/%Y")
+        today = f'=DATA({datetime.now().year};{datetime.now().month};{datetime.now().day})'
 
         row = [
-            "",
-            today,
-            context.user_data["amount"],
-            context.user_data["category"],
-            context.user_data["platform"],
-            "Label"
+            "",                                 # A20 (vuoto)
+            today,                              # B20 (data)
+            context.user_data["amount"],        # C20 (amount)
+            context.user_data["category"],      # D20 (type)
+            context.user_data["platform"],      # E20 (platform)
+            "Label"                             # F20 (description)
         ]
 
         try:
-            if mode == "income":
-                sheet_income.insert_row(row, index=20)
+            
+            if context.user_data["mode"] == "income":
+                sheet_income.insert_row(row, index=20, value_input_option="USER_ENTERED")
             else:
-                sheet_outcome.insert_row(row, index=20)
-        except:
-            pass
+                sheet_outcome.insert_row(row, index=20, value_input_option="USER_ENTERED")
+
+        except Exception as e:
+            print("ERRORE:", e)
 
         context.user_data.clear()
         context.user_data["msg_id"] = msg_id
@@ -320,24 +322,26 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if step == "description":
 
-        today = datetime.now().strftime("%d/%m/%Y")
+        today = f'=DATA({datetime.now().year};{datetime.now().month};{datetime.now().day})'
 
         row = [
-            "",
-            today,
-            context.user_data["amount"],
-            context.user_data["category"],
-            context.user_data["platform"],
-            text
+            "",                                 # A20
+            today,                              # B20
+            context.user_data["amount"],        # C20
+            context.user_data["category"],      # D20
+            context.user_data["platform"],      # E20
+            text                                # F20 ← QUI LA DESCRIPTION
         ]
 
         try:
+            
             if mode == "income":
-                sheet_income.insert_row(row, index=20)
+                sheet_income.insert_row(row, index=20, value_input_option="USER_ENTERED")
             else:
-                sheet_outcome.insert_row(row, index=20)
-        except:
-            pass
+                sheet_outcome.insert_row(row, index=20, value_input_option="USER_ENTERED")
+
+        except Exception as e:
+            print("ERRORE:", e)
 
         msg_id = context.user_data.get("msg_id")
 
